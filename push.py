@@ -1,6 +1,5 @@
 import json
 import boto3
-from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
 
 # Initialize a DynamoDB client
@@ -17,9 +16,11 @@ with open('climate_news_data.json', 'r') as file:
 # Function to upload an item to DynamoDB
 def upload_item(item):
     try:
-        # Use the 'url' as the primary key
-        item['id'] = {'S': item['url']['S']}
-        
+        # Ensure title and publishedAt are present
+        if 'title' not in item or 'publishedAt' not in item:
+            print(f"Skipping item: Missing title or publishedAt")
+            return False
+
         # Remove the 'S' wrapper from each attribute
         for key, value in item.items():
             if isinstance(value, dict) and 'S' in value:
@@ -40,10 +41,14 @@ for item in data:
 
 print(f"Successfully uploaded {successful_uploads} out of {len(data)} items to DynamoDB table {table_name}")
 
-# Optional: Verify the upload by scanning the table
+# Optional: Verify the upload by querying the table
 try:
-    response = table.scan()
+    # Query for a specific title (replace with an actual title from your data)
+    sample_title = data[0]['title']['S']
+    response = table.query(
+        KeyConditionExpression=Key('title').eq(sample_title)
+    )
     items = response['Items']
-    print(f"Total items in the table after upload: {len(items)}")
+    print(f"Query result for title '{sample_title}': {len(items)} items found")
 except ClientError as e:
-    print(f"Error scanning table: {e.response['Error']['Message']}")
+    print(f"Error querying table: {e.response['Error']['Message']}")
