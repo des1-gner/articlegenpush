@@ -1,5 +1,6 @@
 import json
 import random
+import string
 from datetime import datetime, timedelta
 
 # List of news sources
@@ -112,6 +113,11 @@ def generate_author():
                  'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White']
     return {"S": f"{random.choice(first_names)} {random.choice(last_names)}"}
 
+# Function to generate a random URI string
+def generate_uri():
+    random_string = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
+    return f"uri-{random_string}"
+
 # Claims dictionary
 claims = {
     "gw_not_happening": {
@@ -151,7 +157,8 @@ def generate_article(article_id):
         "image": {"S": f"https://{source}/images/climate-{random.randint(1000, 9999)}.jpg"},
         "body": {"S": generate_body()},
         "source": {"S": source},
-        "url": {"S": f"https://{source}/article-{random.randint(10000, 99999)}"}
+        "url": {"S": f"https://{source}/article-{random.randint(10000, 99999)}"},
+        "uri": {"S": generate_uri()}  # Adding the uri field
     }
 
     # Select 1 to min(3, number of available claims) random claims
