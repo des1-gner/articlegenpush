@@ -118,32 +118,49 @@ def generate_uri():
     random_string = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
     return f"uri-{random_string}"
 
-# Claims dictionary
-claims = {
-    "gw_not_happening": {
-        "sentence_key": "bc_gw_not_happening_sentence",
-        "subclaims": ["sc_cold_event_denial", "sc_deny_extreme_weather"]
-    },
-    "not_caused_by_human": {
-        "sentence_key": "bc_not_caused_by_human_sentence",
-        "subclaims": ["sc_natural_variations", "sc_past_climate_reference"]
-    },
-    "impacts_not_bad": {
-        "sentence_key": "bc_impacts_not_bad_sentence",
-        "subclaims": ["sc_species_adapt", "sc_downplay_warming"]
-    },
-    "solutions_wont_work": {
-        "sentence_key": "bc_solutions_wont_work_sentence",
-        "subclaims": ["sc_policies_negative", "sc_policies_ineffective", "sc_policies_difficult", "sc_low_support_policies", "sc_clean_energy_unreliable"]
-    },
-    "science_movement_unrel": {
-        "sentence_key": "bc_science_movement_unrel_sentence",
-        "subclaims": ["sc_climate_science_unrel", "sc_no_consensus", "sc_movement_unreliable", "sc_hoax_conspiracy"]
-    },
-    "individual_action": {
-        "sentence_key": "bc_individual_action_sentence",
-        "subclaims": []
-    }
+#import json
+import random
+import string
+from datetime import datetime, timedelta
+
+# (Previous code for sources, subjects, verbs, topics, descriptors, consequences remains unchanged)
+
+# Updated claims structure
+broadClaims = {
+    "gw_not_happening": "Global warming is not happening",
+    "not_caused_by_human": "Climate change is not caused by human activities",
+    "impacts_not_bad": "Climate change impacts are not that bad",
+    "solutions_wont_work": "Climate solutions won't work",
+    "science_movement_unrel": "Climate science or movement is unreliable",
+    "individual_action": "Individual action is pointless"
+}
+
+subClaims = {
+    "sc_cold_event_denial": "Cold weather event disproves global warming",
+    "sc_deny_extreme_weather": "Extreme weather events are not increasing",
+    "sc_natural_variations": "Climate change is due to natural variations",
+    "sc_past_climate_reference": "Past climate changes prove current changes are natural",
+    "sc_species_adapt": "Species can adapt to climate change",
+    "sc_downplay_warming": "Warming is not as bad as predicted",
+    "sc_policies_negative": "Climate policies have negative consequences",
+    "sc_policies_ineffective": "Climate policies are ineffective",
+    "sc_policies_difficult": "Climate policies are too difficult to implement",
+    "sc_low_support_policies": "There is low public support for climate policies",
+    "sc_clean_energy_unreliable": "Clean energy sources are unreliable",
+    "sc_climate_science_unrel": "Climate science is unreliable",
+    "sc_no_consensus": "There is no scientific consensus on climate change",
+    "sc_movement_unreliable": "The climate movement is unreliable",
+    "sc_hoax_conspiracy": "Climate change is a hoax or conspiracy"
+}
+
+# Mapping between broad claims and subclaims
+claim_mapping = {
+    "gw_not_happening": ["sc_cold_event_denial", "sc_deny_extreme_weather"],
+    "not_caused_by_human": ["sc_natural_variations", "sc_past_climate_reference"],
+    "impacts_not_bad": ["sc_species_adapt", "sc_downplay_warming"],
+    "solutions_wont_work": ["sc_policies_negative", "sc_policies_ineffective", "sc_policies_difficult", "sc_low_support_policies", "sc_clean_energy_unreliable"],
+    "science_movement_unrel": ["sc_climate_science_unrel", "sc_no_consensus", "sc_movement_unreliable", "sc_hoax_conspiracy"],
+    "individual_action": []
 }
 
 # Updated function to generate a random news article
@@ -159,31 +176,30 @@ def generate_article(article_id):
         "source": {"S": source},
         "url": {"S": f"https://{source}/article-{random.randint(10000, 99999)}"},
         "uri": {"S": generate_uri()},
-        "isDuplicate": {"BOOL": random.random() < 0.05}  # 5% chance of being a duplicate
+        "isDuplicate": {"BOOL": random.random() < 0.05},  # 5% chance of being a duplicate
+        "broadClaims": {"M": {}},
+        "subClaims": {"M": {}}
     }
 
-    # Select 1 to min(3, number of available claims) random claims
-    num_claims = min(3, len(claims))
-    num_claims_to_select = random.randint(1, num_claims)
-    selected_claims = random.sample(list(claims.keys()), num_claims_to_select)
+    # Select 1 to 3 random broad claims
+    num_broad_claims = random.randint(1, 3)
+    selected_broad_claims = random.sample(list(broadClaims.keys()), num_broad_claims)
 
-    for claim in selected_claims:
-        article[claims[claim]["sentence_key"]] = {"S": random_sentence()}
+    for bc in selected_broad_claims:
+        article["broadClaims"]["M"][bc] = {"S": random_sentence()}
         
-        # Only attempt to add subclaims if they exist
-        if claims[claim]["subclaims"]:
-            num_available_subclaims = len(claims[claim]["subclaims"])
-            if num_available_subclaims > 0:
-                num_subclaims = min(3, num_available_subclaims)
-                num_subclaims_to_select = random.randint(1, num_subclaims)
-                selected_subclaims = random.sample(claims[claim]["subclaims"], num_subclaims_to_select)
-                
-                for subclaim in selected_subclaims:
-                    article[f"{subclaim}_sentence"] = {"S": random_sentence()}
+        # Select 0 to 3 subclaims for each broad claim
+        available_subclaims = claim_mapping[bc]
+        if available_subclaims:
+            num_subclaims = random.randint(0, min(3, len(available_subclaims)))
+            selected_subclaims = random.sample(available_subclaims, num_subclaims)
+            
+            for sc in selected_subclaims:
+                article["subClaims"]["M"][sc] = {"S": random_sentence()}
 
     # Add think tank reference with 30% probability
     if random.random() < 0.3:
-        article["think_tank_ref_sentence"] = {"S": random_sentence()}
+        article["think_tank_ref"] = {"S": random_sentence()}
 
     return article
 
