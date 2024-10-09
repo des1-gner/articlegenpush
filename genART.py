@@ -176,9 +176,7 @@ def generate_article(article_id):
         "source": {"S": source},
         "url": {"S": f"https://{source}/article-{random.randint(10000, 99999)}"},
         "uri": {"S": generate_uri()},
-        "isDuplicate": {"BOOL": random.random() < 0.05},  # 5% chance of being a duplicate
-        "broadClaims": {"M": {}},
-        "subClaims": {"M": {}}
+        "isDuplicate": {"BOOL": random.random() < 0.05}  # 5% chance of being a duplicate
     }
 
     # Select 1 to 3 random broad claims
@@ -186,7 +184,7 @@ def generate_article(article_id):
     selected_broad_claims = random.sample(list(broadClaims.keys()), num_broad_claims)
 
     for bc in selected_broad_claims:
-        article["broadClaims"]["M"][bc] = {"S": random_sentence()}
+        article[bc] = {"S": random_sentence()}
         
         # Select 0 to 3 subclaims for each broad claim
         available_subclaims = claim_mapping[bc]
@@ -195,13 +193,7 @@ def generate_article(article_id):
             selected_subclaims = random.sample(available_subclaims, num_subclaims)
             
             for sc in selected_subclaims:
-                article["subClaims"]["M"][sc] = {"S": random_sentence()}
-
-    # Remove empty maps to comply with DynamoDB requirements
-    if not article["broadClaims"]["M"]:
-        del article["broadClaims"]
-    if not article["subClaims"]["M"]:
-        del article["subClaims"]
+                article[sc] = {"S": random_sentence()}
 
     # Add think tank reference with 30% probability
     if random.random() < 0.3:
