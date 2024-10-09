@@ -197,6 +197,12 @@ def generate_article(article_id):
             for sc in selected_subclaims:
                 article["subClaims"]["M"][sc] = {"S": random_sentence()}
 
+    # Remove empty maps to comply with DynamoDB requirements
+    if not article["broadClaims"]["M"]:
+        del article["broadClaims"]
+    if not article["subClaims"]["M"]:
+        del article["subClaims"]
+
     # Add think tank reference with 30% probability
     if random.random() < 0.3:
         article["think_tank_ref"] = {"S": random_sentence()}
@@ -211,3 +217,7 @@ with open('climate_news_data.json', 'w') as f:
     json.dump(articles, f, indent=2)
 
 print("Generated 500 articles and saved to climate_news_data.json")
+
+# Print a sample article to verify the structure
+print("\nSample article structure:")
+print(json.dumps(articles[0], indent=2))
