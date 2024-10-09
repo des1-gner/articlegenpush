@@ -181,31 +181,32 @@ def generate_article(article_id):
         "subClaims": {"M": {}}
     }
 
-    # Select 1 to 3 random broad claims
-    num_broad_claims = random.randint(1, 3)
+    # Ensure at least one broad claim is selected
+    num_broad_claims = random.randint(1, len(broadClaims))
     selected_broad_claims = random.sample(list(broadClaims.keys()), num_broad_claims)
+
+    print(f"Selected broad claims: {selected_broad_claims}")  # Debug print
 
     for bc in selected_broad_claims:
         article["broadClaims"]["M"][bc] = {"S": random_sentence()}
+        print(f"Added broad claim: {bc}")  # Debug print
         
-        # Select 0 to 3 subclaims for each broad claim
+        # Ensure at least one subclaim is selected if available
         available_subclaims = claim_mapping[bc]
         if available_subclaims:
-            num_subclaims = random.randint(0, min(3, len(available_subclaims)))
+            num_subclaims = random.randint(1, min(3, len(available_subclaims)))
             selected_subclaims = random.sample(available_subclaims, num_subclaims)
             
+            print(f"Selected subclaims for {bc}: {selected_subclaims}")  # Debug print
+
             for sc in selected_subclaims:
                 article["subClaims"]["M"][sc] = {"S": random_sentence()}
-
-    # Remove empty maps to comply with DynamoDB requirements
-    if not article["broadClaims"]["M"]:
-        del article["broadClaims"]
-    if not article["subClaims"]["M"]:
-        del article["subClaims"]
+                print(f"Added subclaim: {sc}")  # Debug print
 
     # Add think tank reference with 30% probability
     if random.random() < 0.3:
         article["think_tank_ref"] = {"S": random_sentence()}
+        print("Added think tank reference")  # Debug print
 
     return article
 
@@ -221,3 +222,9 @@ print("Generated 500 articles and saved to climate_news_data.json")
 # Print a sample article to verify the structure
 print("\nSample article structure:")
 print(json.dumps(articles[0], indent=2))
+
+# Print summary of claims in the first 5 articles
+for i in range(5):
+    print(f"\nArticle {i} claims:")
+    print(f"Broad claims: {list(articles[i]['broadClaims']['M'].keys())}")
+    print(f"Subclaims: {list(articles[i]['subClaims']['M'].keys())}")
