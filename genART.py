@@ -146,7 +146,7 @@ claims = {
     }
 }
 
-# Function to generate a random news article
+# Updated function to generate a random news article
 def generate_article(article_id):
     source = random.choice(sources)
     article = {
@@ -158,7 +158,8 @@ def generate_article(article_id):
         "body": {"S": generate_body()},
         "source": {"S": source},
         "url": {"S": f"https://{source}/article-{random.randint(10000, 99999)}"},
-        "uri": {"S": generate_uri()}  # Adding the uri field
+        "uri": {"S": generate_uri()},
+        "isDuplicate": {"BOOL": random.random() < 0.05}  # 5% chance of being a duplicate
     }
 
     # Select 1 to min(3, number of available claims) random claims
