@@ -14,6 +14,23 @@ table = dynamodb.Table(table_name)
 with open('climate_news_data.json', 'r') as file:
     data = json.load(file)
 
+def process_value(value):
+    if isinstance(value, dict):
+        if 'S' in value:
+            return value['S']
+        elif 'N' in value:
+            return int(value['N'])
+        elif 'BOOL' in value:
+            return value['BOOL']
+        elif 'M' in value:
+            return {k: process_value(v) for k, v in value['M'].items()}
+        else:
+            return {k: process_value(v) for k, v in value.items()}
+    elif isinstance(value, list):
+        return [process_value(item) for item in value]
+    else:
+        return value
+
 # Function to upload an item to DynamoDB
 def upload_item(item):
     try:
@@ -25,24 +42,14 @@ def upload_item(item):
         # Create a cleaned item dictionary
         cleaned_item = {}
         
-        # Handle the articleId separately to ensure it's a number
-        cleaned_item['articleId'] = int(item['articleId']['N'])
-        
-        # Handle all other fields
+        # Process all fields
         for key, value in item.items():
-            if key != 'articleId':  # Skip articleId as we've already handled it
-                if isinstance(value, dict):
-                    if 'S' in value:  # Handle string type
-                        cleaned_item[key] = value['S']
-                    # Add more type handlers here if needed
-                else:
-                    cleaned_item[key] = value
+            cleaned_item[key] = process_value(value)
 
         # Upload the item
         table.put_item(Item=cleaned_item)
         print(f"Successfully uploaded article {cleaned_item['articleId']}")
         return True
-
     except ClientError as e:
         print(f"Error uploading article {item.get('articleId', {}).get('N', 'unknown')}: {e.response['Error']['Message']}")
         return False
@@ -53,7 +60,6 @@ def upload_item(item):
 # Upload each item to DynamoDB
 successful_uploads = 0
 failed_uploads = 0
-
 for item in data:
     if upload_item(item):
         successful_uploads += 1
@@ -76,9 +82,10 @@ try:
     if response['Items']:
         print(f"\nVerification successful: Found article with ID {sample_id}")
         print(f"Number of items found: {len(response['Items'])}")
+        print("Sample item structure:")
+        print(json.dumps(response['Items'][0], indent=2))
     else:
         print(f"\nVerification failed: No article found with ID {sample_id}")
-
 except ClientError as e:
     print(f"\nError querying table: {e.response['Error']['Message']}")
 except Exception as e:
