@@ -161,33 +161,33 @@ claim_mapping = {
     "individual_action": []
 }
 
-# Updated function to generate a random news article (lowercase except for date)
+# Updated function to generate a random news article (lowercase content, original variable names)
 def generate_article(article_id):
     source = random.choice(sources)
     article = {
-        "articleid": {"N": str(article_id)},
+        "articleId": {"N": str(article_id)},
         "title": {"S": random_title()},
-        "datetime": {"S": random_date()},  # Keeps original case
+        "dateTime": {"S": random_date()},  # Keeps original case
         "authors": generate_author(),
         "image": {"S": f"https://{source}/images/climate-{random.randint(1000, 9999)}.jpg"},
         "body": {"S": generate_body()},
         "source": {"S": source},
         "url": {"S": f"https://{source}/article-{random.randint(10000, 99999)}"},
         "uri": {"S": generate_uri()},
-        "isduplicate": {"BOOL": random.random() < 0.05},  # 5% chance of being a duplicate
-        "broadclaims": {"M": {}},
-        "subclaims": {"M": {}}
+        "isDuplicate": {"BOOL": random.random() < 0.05},  # 5% chance of being a duplicate
+        "broadClaims": {"M": {}},
+        "subClaims": {"M": {}}
     }
 
     # Ensure at least one broad claim is selected
     num_broad_claims = random.randint(1, len(broadClaims))
     selected_broad_claims = random.sample(list(broadClaims.keys()), num_broad_claims)
 
-    print(f"selected broad claims: {selected_broad_claims}")  # Debug print (lowercase)
+    print(f"Selected broad claims: {selected_broad_claims}")  # Debug print
 
     for bc in selected_broad_claims:
-        article["broadclaims"]["M"][bc] = {"S": random_sentence()}
-        print(f"added broad claim: {bc}")  # Debug print (lowercase)
+        article["broadClaims"]["M"][bc] = {"S": random_sentence()}
+        print(f"Added broad claim: {bc}")  # Debug print
         
         # Ensure at least one subclaim is selected if available
         available_subclaims = claim_mapping[bc]
@@ -195,16 +195,16 @@ def generate_article(article_id):
             num_subclaims = random.randint(1, min(3, len(available_subclaims)))
             selected_subclaims = random.sample(available_subclaims, num_subclaims)
             
-            print(f"selected subclaims for {bc}: {selected_subclaims}")  # Debug print (lowercase)
+            print(f"Selected subclaims for {bc}: {selected_subclaims}")  # Debug print
 
             for sc in selected_subclaims:
-                article["subclaims"]["M"][sc] = {"S": random_sentence()}
-                print(f"added subclaim: {sc}")  # Debug print (lowercase)
+                article["subClaims"]["M"][sc] = {"S": random_sentence()}
+                print(f"Added subclaim: {sc}")  # Debug print
 
     # Add think tank reference with 30% probability
     if random.random() < 0.3:
         article["think_tank_ref"] = {"S": random_sentence()}
-        print("added think tank reference")  # Debug print (lowercase)
+        print("Added think tank reference")  # Debug print
 
     return article
 
@@ -215,14 +215,14 @@ articles = [generate_article(i) for i in range(500)]
 with open('climate_news_data.json', 'w') as f:
     json.dump(articles, f, indent=2)
 
-print("generated 500 articles and saved to climate_news_data.json")
+print("Generated 500 articles and saved to climate_news_data.json")
 
 # Print a sample article to verify the structure
-print("\nsample article structure:")
+print("\nSample article structure:")
 print(json.dumps(articles[0], indent=2))
 
 # Print summary of claims in the first 5 articles
 for i in range(5):
-    print(f"\narticle {i} claims:")
-    print(f"broad claims: {list(articles[i]['broadclaims']['M'].keys())}")
-    print(f"subclaims: {list(articles[i]['subclaims']['M'].keys())}")
+    print(f"\nArticle {i} claims:")
+    print(f"Broad claims: {list(articles[i]['broadClaims']['M'].keys())}")
+    print(f"Subclaims: {list(articles[i]['subClaims']['M'].keys())}")
