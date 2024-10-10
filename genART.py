@@ -3,23 +3,23 @@ import random
 import string
 from datetime import datetime, timedelta
 
-# List of news sources
+# List of news sources (lowercase)
 sources = [
-    "Theaustralian.com.au", "Theguardian.com", "Abc.net.au", "News.com.au",
-    "Heraldsun.com.au", "Skynews.com.au", "Afr.com", "Smh.com.au",
-    "Dailytelegraph.com.au", "Foxnews.com", "Nytimes.com", "Dailywire.com",
-    "Couriermail.com.au", "Thewest.com.au", "7news.com.au", "9news.com.au",
-    "Theconversation.com", "Nypost.com", "Wsj.com", "Wattsupwiththat.com",
-    "Breitbart.com", "Newsmax.com", "Naturalnews.com", "Washingtontimes.com"
+    "theaustralian.com.au", "theguardian.com", "abc.net.au", "news.com.au",
+    "heraldsun.com.au", "skynews.com.au", "afr.com", "smh.com.au",
+    "dailytelegraph.com.au", "foxnews.com", "nytimes.com", "dailywire.com",
+    "couriermail.com.au", "thewest.com.au", "7news.com.au", "9news.com.au",
+    "theconversation.com", "nypost.com", "wsj.com", "wattsupwiththat.com",
+    "breitbart.com", "newsmax.com", "naturalnews.com", "washingtontimes.com"
 ]
 
-# Expanded word lists for more varied content generation
+# Expanded word lists for more varied content generation (lowercase)
 subjects = [
-    "New study", "Recent report", "Climate scientist", "Environmental group", "Think tank",
-    "Research team", "Government report", "Scientific analysis", "Expert panel", "International study",
-    "Leading researcher", "Climate observatory", "Weather station", "Satellite data", "Computer model",
-    "Statistical analysis", "Field research", "Laboratory experiment", "Long-term study", "Meta-analysis",
-    "Industry report", "Academic paper", "Policy brief", "Working group", "Research consortium"
+    "new study", "recent report", "climate scientist", "environmental group", "think tank",
+    "research team", "government report", "scientific analysis", "expert panel", "international study",
+    "leading researcher", "climate observatory", "weather station", "satellite data", "computer model",
+    "statistical analysis", "field research", "laboratory experiment", "long-term study", "meta-analysis",
+    "industry report", "academic paper", "policy brief", "working group", "research consortium"
 ]
 
 verbs = [
@@ -36,7 +36,12 @@ topics = [
     "carbon dioxide levels", "methane emissions", "climate policy effectiveness",
     "environmental regulations", "fossil fuel industry", "clean energy transition",
     "climate modeling accuracy", "weather pattern changes", "ecosystem impacts",
-    "agricultural effects", "economic implications"
+    "agricultural effects", "economic implications",
+    "wildfire frequency", "bushfire intensity", "arson allegations",
+    "forest management practices", "greenies' influence", "smog levels",
+    "bush regeneration", "koala habitat loss", "australian climate patterns",
+    "california drought conditions", "geological climate indicators",
+    "human-induced climate change", "natural climate variability"
 ]
 
 descriptors = [
@@ -56,23 +61,23 @@ consequences = [
     "influencing policy decisions"
 ]
 
-# Function to generate a more complex random sentence
+# Function to generate a more complex random sentence (lowercase)
 def random_sentence():
     pattern = f"{random.choice(subjects)} {random.choice(verbs)} that {random.choice(topics)} are {random.choice(descriptors)}, {random.choice(consequences)}."
-    return pattern
+    return pattern.lower()
 
-# Function to generate a more complex random sentence for titles
+# Function to generate a more complex random sentence for titles (lowercase)
 def random_title():
     patterns = [
-        f"New {random.choice(topics)}: {random.choice(descriptors)} findings {random.choice(consequences)}",
-        f"Study: {random.choice(topics)} show {random.choice(descriptors)} trends",
-        f"Report: {random.choice(descriptors)} changes in {random.choice(topics)}",
-        f"Analysis reveals {random.choice(descriptors)} {random.choice(topics)}",
-        f"Expert: {random.choice(topics)} {random.choice(verbs)} {random.choice(descriptors)} shift"
+        f"new {random.choice(topics)}: {random.choice(descriptors)} findings {random.choice(consequences)}",
+        f"study: {random.choice(topics)} show {random.choice(descriptors)} trends",
+        f"report: {random.choice(descriptors)} changes in {random.choice(topics)}",
+        f"analysis reveals {random.choice(descriptors)} {random.choice(topics)}",
+        f"expert: {random.choice(topics)} {random.choice(verbs)} {random.choice(descriptors)} shift"
     ]
-    return random.choice(patterns)
+    return random.choice(patterns).lower()
 
-# Function to generate a longer, more varied body text
+# Function to generate a longer, more varied body text (lowercase)
 def generate_body():
     paragraphs = []
     num_paragraphs = random.randint(3, 6)
@@ -84,17 +89,17 @@ def generate_body():
         for _ in range(num_sentences):
             pattern = random.choice([
                 f"{random.choice(subjects)} {random.choice(verbs)} that {random.choice(topics)} are {random.choice(descriptors)}, {random.choice(consequences)}.",
-                f"According to {random.choice(subjects)}, {random.choice(topics)} have shown {random.choice(descriptors)} changes, {random.choice(consequences)}.",
-                f"The {random.choice(descriptors)} nature of {random.choice(topics)} {random.choice(verbs)} {random.choice(consequences)}.",
-                f"Researchers studying {random.choice(topics)} have found {random.choice(descriptors)} evidence {random.choice(consequences)}."
+                f"according to {random.choice(subjects)}, {random.choice(topics)} have shown {random.choice(descriptors)} changes, {random.choice(consequences)}.",
+                f"the {random.choice(descriptors)} nature of {random.choice(topics)} {random.choice(verbs)} {random.choice(consequences)}.",
+                f"researchers studying {random.choice(topics)} have found {random.choice(descriptors)} evidence {random.choice(consequences)}."
             ])
-            sentences.append(pattern)
+            sentences.append(pattern.lower())
         
         paragraphs.append(" ".join(sentences))
     
     return "\n\n".join(paragraphs)
 
-# Function to generate a random date in the specified range
+# Function to generate a random date in the specified range (keeps original case)
 def random_date():
     start_date = datetime(2019, 9, 1)
     end_date = datetime(2020, 4, 1)
@@ -103,57 +108,50 @@ def random_date():
     )
     return random_date.strftime("%Y-%m-%dT%H:%M:%SZ")
 
-# Function to generate author (with 25% chance of being empty)
+# Function to generate author (with 25% chance of being empty, lowercase)
 def generate_author():
     if random.random() < 0.25:
         return {"S": ""}
-    first_names = ['John', 'Jane', 'Alex', 'Sam', 'Michael', 'Sarah', 'David', 'Emma', 
-                  'James', 'Linda', 'Robert', 'Patricia', 'Daniel', 'Elizabeth']
-    last_names = ['Smith', 'Doe', 'Johnson', 'Brown', 'Davis', 'Miller', 'Wilson', 
-                 'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White']
+    first_names = ['john', 'jane', 'alex', 'sam', 'michael', 'sarah', 'david', 'emma', 
+                  'james', 'linda', 'robert', 'patricia', 'daniel', 'elizabeth']
+    last_names = ['smith', 'doe', 'johnson', 'brown', 'davis', 'miller', 'wilson', 
+                 'moore', 'taylor', 'anderson', 'thomas', 'jackson', 'white']
     return {"S": f"{random.choice(first_names)} {random.choice(last_names)}"}
 
-# Function to generate a random URI string
+# Function to generate a random URI string (lowercase)
 def generate_uri():
     random_string = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
     return f"uri-{random_string}"
 
-#import json
-import random
-import string
-from datetime import datetime, timedelta
-
-# (Previous code for sources, subjects, verbs, topics, descriptors, consequences remains unchanged)
-
-# Updated claims structure
+# Updated claims structure (lowercase)
 broadClaims = {
-    "gw_not_happening": "Global warming is not happening",
-    "not_caused_by_human": "Climate change is not caused by human activities",
-    "impacts_not_bad": "Climate change impacts are not that bad",
-    "solutions_wont_work": "Climate solutions won't work",
-    "science_movement_unrel": "Climate science or movement is unreliable",
-    "individual_action": "Individual action is pointless"
+    "gw_not_happening": "global warming is not happening",
+    "not_caused_by_human": "climate change is not caused by human activities",
+    "impacts_not_bad": "climate change impacts are not that bad",
+    "solutions_wont_work": "climate solutions won't work",
+    "science_movement_unrel": "climate science or movement is unreliable",
+    "individual_action": "individual action is pointless"
 }
 
 subClaims = {
-    "sc_cold_event_denial": "Cold weather event disproves global warming",
-    "sc_deny_extreme_weather": "Extreme weather events are not increasing",
-    "sc_natural_variations": "Climate change is due to natural variations",
-    "sc_past_climate_reference": "Past climate changes prove current changes are natural",
-    "sc_species_adapt": "Species can adapt to climate change",
-    "sc_downplay_warming": "Warming is not as bad as predicted",
-    "sc_policies_negative": "Climate policies have negative consequences",
-    "sc_policies_ineffective": "Climate policies are ineffective",
-    "sc_policies_difficult": "Climate policies are too difficult to implement",
-    "sc_low_support_policies": "There is low public support for climate policies",
-    "sc_clean_energy_unreliable": "Clean energy sources are unreliable",
-    "sc_climate_science_unrel": "Climate science is unreliable",
-    "sc_no_consensus": "There is no scientific consensus on climate change",
-    "sc_movement_unreliable": "The climate movement is unreliable",
-    "sc_hoax_conspiracy": "Climate change is a hoax or conspiracy"
+    "sc_cold_event_denial": "cold weather event disproves global warming",
+    "sc_deny_extreme_weather": "extreme weather events are not increasing",
+    "sc_natural_variations": "climate change is due to natural variations",
+    "sc_past_climate_reference": "past climate changes prove current changes are natural",
+    "sc_species_adapt": "species can adapt to climate change",
+    "sc_downplay_warming": "warming is not as bad as predicted",
+    "sc_policies_negative": "climate policies have negative consequences",
+    "sc_policies_ineffective": "climate policies are ineffective",
+    "sc_policies_difficult": "climate policies are too difficult to implement",
+    "sc_low_support_policies": "there is low public support for climate policies",
+    "sc_clean_energy_unreliable": "clean energy sources are unreliable",
+    "sc_climate_science_unrel": "climate science is unreliable",
+    "sc_no_consensus": "there is no scientific consensus on climate change",
+    "sc_movement_unreliable": "the climate movement is unreliable",
+    "sc_hoax_conspiracy": "climate change is a hoax or conspiracy"
 }
 
-# Mapping between broad claims and subclaims
+# Mapping between broad claims and subclaims (unchanged)
 claim_mapping = {
     "gw_not_happening": ["sc_cold_event_denial", "sc_deny_extreme_weather"],
     "not_caused_by_human": ["sc_natural_variations", "sc_past_climate_reference"],
@@ -163,33 +161,33 @@ claim_mapping = {
     "individual_action": []
 }
 
-# Updated function to generate a random news article
+# Updated function to generate a random news article (lowercase except for date)
 def generate_article(article_id):
     source = random.choice(sources)
     article = {
-        "articleId": {"N": str(article_id)},
+        "articleid": {"N": str(article_id)},
         "title": {"S": random_title()},
-        "dateTime": {"S": random_date()},
+        "datetime": {"S": random_date()},  # Keeps original case
         "authors": generate_author(),
         "image": {"S": f"https://{source}/images/climate-{random.randint(1000, 9999)}.jpg"},
         "body": {"S": generate_body()},
         "source": {"S": source},
         "url": {"S": f"https://{source}/article-{random.randint(10000, 99999)}"},
         "uri": {"S": generate_uri()},
-        "isDuplicate": {"BOOL": random.random() < 0.05},  # 5% chance of being a duplicate
-        "broadClaims": {"M": {}},
-        "subClaims": {"M": {}}
+        "isduplicate": {"BOOL": random.random() < 0.05},  # 5% chance of being a duplicate
+        "broadclaims": {"M": {}},
+        "subclaims": {"M": {}}
     }
 
     # Ensure at least one broad claim is selected
     num_broad_claims = random.randint(1, len(broadClaims))
     selected_broad_claims = random.sample(list(broadClaims.keys()), num_broad_claims)
 
-    print(f"Selected broad claims: {selected_broad_claims}")  # Debug print
+    print(f"selected broad claims: {selected_broad_claims}")  # Debug print (lowercase)
 
     for bc in selected_broad_claims:
-        article["broadClaims"]["M"][bc] = {"S": random_sentence()}
-        print(f"Added broad claim: {bc}")  # Debug print
+        article["broadclaims"]["M"][bc] = {"S": random_sentence()}
+        print(f"added broad claim: {bc}")  # Debug print (lowercase)
         
         # Ensure at least one subclaim is selected if available
         available_subclaims = claim_mapping[bc]
@@ -197,16 +195,16 @@ def generate_article(article_id):
             num_subclaims = random.randint(1, min(3, len(available_subclaims)))
             selected_subclaims = random.sample(available_subclaims, num_subclaims)
             
-            print(f"Selected subclaims for {bc}: {selected_subclaims}")  # Debug print
+            print(f"selected subclaims for {bc}: {selected_subclaims}")  # Debug print (lowercase)
 
             for sc in selected_subclaims:
-                article["subClaims"]["M"][sc] = {"S": random_sentence()}
-                print(f"Added subclaim: {sc}")  # Debug print
+                article["subclaims"]["M"][sc] = {"S": random_sentence()}
+                print(f"added subclaim: {sc}")  # Debug print (lowercase)
 
     # Add think tank reference with 30% probability
     if random.random() < 0.3:
         article["think_tank_ref"] = {"S": random_sentence()}
-        print("Added think tank reference")  # Debug print
+        print("added think tank reference")  # Debug print (lowercase)
 
     return article
 
@@ -217,14 +215,14 @@ articles = [generate_article(i) for i in range(500)]
 with open('climate_news_data.json', 'w') as f:
     json.dump(articles, f, indent=2)
 
-print("Generated 500 articles and saved to climate_news_data.json")
+print("generated 500 articles and saved to climate_news_data.json")
 
 # Print a sample article to verify the structure
-print("\nSample article structure:")
+print("\nsample article structure:")
 print(json.dumps(articles[0], indent=2))
 
 # Print summary of claims in the first 5 articles
 for i in range(5):
-    print(f"\nArticle {i} claims:")
-    print(f"Broad claims: {list(articles[i]['broadClaims']['M'].keys())}")
-    print(f"Subclaims: {list(articles[i]['subClaims']['M'].keys())}")
+    print(f"\narticle {i} claims:")
+    print(f"broad claims: {list(articles[i]['broadclaims']['M'].keys())}")
+    print(f"subclaims: {list(articles[i]['subclaims']['M'].keys())}")
